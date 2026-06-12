@@ -187,6 +187,12 @@ To add a mapping, open a PR against `catalog.yaml`. Unparsed ledger entries in y
 
 ---
 
+## Using with Claude Code (or any AI agent)
+
+The repo ships a Claude Code skill at [.claude/skills/demagic/SKILL.md](.claude/skills/demagic/SKILL.md). Open this repo in Claude Code and ask things like *"what's inside the Magic app at C:\apps\MyApp?"* or *"convert this Magic project to Python but don't spend money on LLM calls yet"* — the skill teaches the agent the full pipeline, how to enumerate project copies, how to read the coverage report, and the troubleshooting table. To use it from another project, copy the `.claude/skills/demagic/` folder into that project (or your `~/.claude/skills/`).
+
+---
+
 ## Contributing
 
 Issues and PRs welcome. The best place to start:
