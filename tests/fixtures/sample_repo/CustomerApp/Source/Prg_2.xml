@@ -1,0 +1,18 @@
+<Application>
+  <Task MainProgram="Y">
+    <Header id="2" Description="Nightly Order Totals"/>
+    <DataView>
+      <DB obj="2" comp="0"/>
+      <DB obj="3" comp="0"/>
+    </DataView>
+    <LogicUnits>
+      <LogicUnit>
+        <Level val="T"/>
+        <LogicLine>
+          <OperationType val="Update"/>
+          <ExpSyntax val="Round(Total*1.1,2)"/>
+        </LogicLine>
+      </LogicUnit>
+    </LogicUnits>
+  </Task>
+</Application>

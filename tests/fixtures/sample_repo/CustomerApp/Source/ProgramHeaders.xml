@@ -1,0 +1,18 @@
+<Application>
+  <Programs>
+    <Program>
+      <Header id="1" Description="Customer List">
+        <TaskType val="O"/>
+        <Public val="custlist"/>
+        <Interactive val="Y"/>
+        <LastModified date="01/02/2026"/>
+      </Header>
+    </Program>
+    <Program>
+      <Header id="2" Description="Nightly Order Totals">
+        <TaskType val="B"/>
+        <LastModified date="15/01/2026"/>
+      </Header>
+    </Program>
+  </Programs>
+</Application>

@@ -1,0 +1,39 @@
+<Application>
+  <Task MainProgram="Y">
+    <Header id="1" Description="Customer List"/>
+    <DataView>
+      <DB obj="1" comp="0"/>
+    </DataView>
+    <Forms>
+      <Form>
+        <FormName valUnicode="Customer Browser"/>
+        <Control><ControlName val="btnRefresh"/></Control>
+        <Control><ControlName val="gridCustomers"/></Control>
+      </Form>
+    </Forms>
+    <LogicUnits>
+      <LogicUnit>
+        <Level val="T"/>
+        <LogicLine>
+          <OperationType val="Update"/>
+          <ExpSyntax val="Trim(Name)"/>
+        </LogicLine>
+        <LogicLine>
+          <OperationType val="Call"/>
+          <CallTask>
+            <TaskID obj="2" comp="0"/>
+          </CallTask>
+        </LogicLine>
+      </LogicUnit>
+      <LogicUnit>
+        <Level val="R"/>
+        <LogicLine>
+          <OperationType val="Verify"/>
+          <ExpSyntax val="CustomerID&gt;0"/>
+          <STP TXT="Customer ID must be positive" Mode="E" TitleTxt="Validation"/>
+        </LogicLine>
+      </LogicUnit>
+    </LogicUnits>
+    <FutureWidget experimental="Y"/>
+  </Task>
+</Application>

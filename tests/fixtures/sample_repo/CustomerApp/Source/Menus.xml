@@ -1,0 +1,8 @@
+<ApplicationMenus>
+  <Menus>
+    <MenuEntry name="Customers" program="1"/>
+    <MenuEntry name="Reports">
+      <MenuEntry name="Order Totals" program="2"/>
+    </MenuEntry>
+  </Menus>
+</ApplicationMenus>

@@ -1,0 +1,50 @@
+<Application>
+  <DataObjects>
+    <DataObject id="1" name="Customers" PhysicalName="tbl_Customer" data_source="MAINDB">
+      <ObjectType val="T"/>
+      <Columns>
+        <Column id="1" name="CustomerID">
+          <DbColumnName val="customer_id"/>
+          <Attribute val="N"/>
+        </Column>
+        <Column id="2" name="Name">
+          <DbColumnName val="name"/>
+          <Attribute val="U"/>
+        </Column>
+        <Column id="3" name="JoinedOn">
+          <DbColumnName val="joined_on"/>
+          <Attribute val="D"/>
+        </Column>
+      </Columns>
+      <Indexes>
+        <Index name="PK_Customer" unique="Y">
+          <IndexColumn name="CustomerID"/>
+        </Index>
+      </Indexes>
+    </DataObject>
+    <DataObject id="2" name="Orders" PhysicalName="tbl_Order" data_source="MAINDB">
+      <ObjectType val="T"/>
+      <Columns>
+        <Column id="1" name="OrderID">
+          <DbColumnName val="order_id"/>
+          <Attribute val="N"/>
+        </Column>
+        <Column id="2" name="CustomerID">
+          <DbColumnName val="customer_id"/>
+          <Attribute val="N"/>
+        </Column>
+        <Column id="3" name="Total">
+          <DbColumnName val="total"/>
+          <Attribute val="N"/>
+        </Column>
+      </Columns>
+    </DataObject>
+    <DataObject id="3" name="GetOrderTotals" PhysicalName="p_GetOrderTotals" data_source="MAINDB">
+      <ObjectType val="S"/>
+      <SPType val="SELECT"/>
+      <SPParameters>
+        <SPParameter name="@CustomerID"/>
+      </SPParameters>
+    </DataObject>
+  </DataObjects>
+</Application>
