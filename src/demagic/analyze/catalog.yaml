@@ -1,0 +1,25 @@
+# Magic xpa function catalog: Magic function -> Python equivalent.
+# `python` is a format template; {0}, {1}... are the Magic call arguments.
+Trim:    {python: "{0}.strip()"}
+LTrim:   {python: "{0}.lstrip()"}
+RTrim:   {python: "{0}.rstrip()"}
+Upper:   {python: "{0}.upper()"}
+Lower:   {python: "{0}.lower()"}
+Len:     {python: "len({0})"}
+Mid:     {python: "{0}[{1}-1:{1}-1+{2}]"}
+Left:    {python: "{0}[:{1}]"}
+Right:   {python: "{0}[-{1}:]"}
+Round:   {python: "round({0}, {1})"}
+Abs:     {python: "abs({0})"}
+Date:    {python: "datetime.date.today()", imports: ["datetime"]}
+Time:    {python: "datetime.datetime.now().time()", imports: ["datetime"]}
+Year:    {python: "{0}.year"}
+Month:   {python: "{0}.month"}
+Day:     {python: "{0}.day"}
+Chr:     {python: "chr({0})"}
+Asc:     {python: "ord({0})"}
+Val:     {python: "float({0})"}
+Str:     {python: "str({0})"}
+IF:      {python: "({1} if {0} else {2})"}
+Null:    {python: "None"}
+IsNull:  {python: "({0} is None)"}
