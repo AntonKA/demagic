@@ -1,18 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Application>
-  <Task MainProgram="Y">
-    <Header id="2" Description="Nightly Order Totals"/>
-    <DataView>
-      <DB obj="2" comp="0"/>
-      <DB obj="3" comp="0"/>
-    </DataView>
-    <LogicUnits>
-      <LogicUnit>
-        <Level val="T"/>
-        <LogicLine>
-          <OperationType val="Update"/>
-          <ExpSyntax val="Round(Total*1.1,2)"/>
-        </LogicLine>
-      </LogicUnit>
-    </LogicUnits>
-  </Task>
+
+  <Header>
+    <Version val="14100.00"/>
+    <WithIsn val="Y"/>
+    <_InternalTask val="N"/>
+    <IsRoot val="N"/>
+    <InIndex val="N"/>
+    <UniqueISNConvState val="12"/>
+  </Header>
+
+  <ProgramsRepository>
+    <Programs>
+      <Task MainProgram="N">
+        <Header Description="Nightly Order Totals" ISN_2="2" LastIsn="2" id="2">
+          <LastModified _date="738001" _time="40001" date="02/01/2024" time="11:00:01"/>
+          <TaskType val="B"/>
+          <External val="N"/>
+          <DotNetObjectExists val="N"/>
+        </Header>
+        <Resource>
+          <DB id="1">
+            <DataObject comp="-1" obj="2"/>
+            <Access val="R"/>
+            <Share val="W"/>
+          </DB>
+          <DB id="2">
+            <DataObject comp="-1" obj="3"/>
+            <Access val="W"/>
+            <Share val="W"/>
+          </DB>
+          <Columns/>
+        </Resource>
+        <Information>
+          <DB comp="-1"/>
+          <TaskProperties>
+            <TransactionMode val="P"/>
+          </TaskProperties>
+        </Information>
+        <TaskLogic>
+          <LogicUnit id="3">
+            <Level val="T"/>
+            <Type val="M"/>
+            <LogicLines>
+              <LogicLine>
+                <OperationType val="Update"/>
+                <ExpSyntax val="Round(Total*1.1,2)"/>
+              </LogicLine>
+            </LogicLines>
+          </LogicUnit>
+        </TaskLogic>
+        <TaskForms>
+          <FormEntry id="1">
+            <PropertyList model="FORM_GUI0">
+              <FormName id="311" valUnicode="Order Summary"/>
+            </PropertyList>
+          </FormEntry>
+        </TaskForms>
+        <Expressions>
+          <Expression id="1">
+            <ExpSyntax val="DateInt()"/>
+            <ExpAttribute val="*"/>
+          </Expression>
+        </Expressions>
+      </Task>
+    </Programs>
+  </ProgramsRepository>
+
 </Application>

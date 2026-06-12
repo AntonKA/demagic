@@ -1,39 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Application>
-  <Task MainProgram="Y">
-    <Header id="1" Description="Customer List"/>
-    <DataView>
-      <DB obj="1" comp="0"/>
-    </DataView>
-    <Forms>
-      <Form>
-        <FormName valUnicode="Customer Browser"/>
-        <Control><ControlName val="btnRefresh"/></Control>
-        <Control><ControlName val="gridCustomers"/></Control>
-      </Form>
-    </Forms>
-    <LogicUnits>
-      <LogicUnit>
-        <Level val="T"/>
-        <LogicLine>
-          <OperationType val="Update"/>
-          <ExpSyntax val="Trim(Name)"/>
-        </LogicLine>
-        <LogicLine>
-          <OperationType val="Call"/>
-          <CallTask>
-            <TaskID obj="2" comp="0"/>
-          </CallTask>
-        </LogicLine>
-      </LogicUnit>
-      <LogicUnit>
-        <Level val="R"/>
-        <LogicLine>
-          <OperationType val="Verify"/>
-          <ExpSyntax val="CustomerID&gt;0"/>
-          <STP TXT="Customer ID must be positive" Mode="E" TitleTxt="Validation"/>
-        </LogicLine>
-      </LogicUnit>
-    </LogicUnits>
-    <FutureWidget experimental="Y"/>
-  </Task>
+
+  <Header>
+    <Version val="14100.00"/>
+    <WithIsn val="Y"/>
+    <_InternalTask val="N"/>
+    <IsRoot val="Y"/>
+    <InIndex val="N"/>
+    <UniqueISNConvState val="12"/>
+  </Header>
+
+  <ProgramsRepository>
+    <Programs>
+      <Task MainProgram="Y">
+        <Header Description="Customer List" ISN_2="1" LastIsn="1" id="1">
+          <LastModified _date="738000" _time="40000" date="01/01/2024" time="11:00:00"/>
+          <TaskType val="C"/>
+          <Interactive val="Y"/>
+          <External val="N"/>
+          <DotNetObjectExists val="N"/>
+        </Header>
+        <Resource>
+          <DB id="1">
+            <DataObject comp="-1" obj="1"/>
+            <Access val="R"/>
+            <Share val="W"/>
+            <Open val="N"/>
+            <Cache val="Y"/>
+          </DB>
+          <Columns/>
+        </Resource>
+        <Information>
+          <DB comp="-1"/>
+          <Sort>
+            <CLS val="A"/>
+          </Sort>
+          <TaskProperties>
+            <SelectionTable val="N"/>
+            <TransactionMode val="P"/>
+          </TaskProperties>
+        </Information>
+        <TaskLogic>
+          <LogicUnit id="1">
+            <Level val="T"/>
+            <Type val="M"/>
+            <LogicLines>
+              <LogicLine>
+                <OperationType val="Update"/>
+                <ExpSyntax val="Trim(Name)"/>
+              </LogicLine>
+              <LogicLine>
+                <OperationType val="Call"/>
+                <CallTask>
+                  <TaskID comp="-1" obj="2"/>
+                </CallTask>
+              </LogicLine>
+            </LogicLines>
+          </LogicUnit>
+          <LogicUnit id="2">
+            <Level val="R"/>
+            <Type val="M"/>
+            <LogicLines>
+              <LogicLine>
+                <OperationType val="Verify"/>
+                <ExpSyntax val="CustomerID&gt;0"/>
+                <STP TXT="Customer ID must be positive" Mode="E" TitleTxt="Validation"/>
+              </LogicLine>
+            </LogicLines>
+          </LogicUnit>
+        </TaskLogic>
+        <TaskForms>
+          <FormEntry id="1">
+            <PropertyList model="FORM_GUI0">
+              <FormName id="311" valUnicode="Customer Browser"/>
+            </PropertyList>
+            <Control id="1">
+              <PropertyList model="CTRL_GUI0_BUTTON">
+                <ControlName id="46" val="btnRefresh"/>
+              </PropertyList>
+            </Control>
+            <Control id="2">
+              <PropertyList model="CTRL_GUI0_TABLE">
+                <ControlName id="46" val="gridCustomers"/>
+              </PropertyList>
+            </Control>
+          </FormEntry>
+        </TaskForms>
+        <Expressions>
+          <Expression id="1">
+            <ExpSyntax val="Upper(Name)"/>
+            <ExpAttribute val="A"/>
+          </Expression>
+        </Expressions>
+        <FutureWidget experimental="Y"/>
+      </Task>
+    </Programs>
+  </ProgramsRepository>
+
 </Application>

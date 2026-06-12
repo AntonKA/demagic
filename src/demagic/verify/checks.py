@@ -24,9 +24,13 @@ class VerificationResult:
 
 
 def run_ruff(target: Path) -> int:
-    """Run ruff against generated code; returns issue count (0 = clean)."""
+    """Run ruff against generated code; returns issue count (0 = clean).
+
+    Uses --output-format=concise so each finding is exactly one line.
+    """
     proc = subprocess.run(
-        [sys.executable, "-m", "ruff", "check", "--quiet", str(target)],
+        [sys.executable, "-m", "ruff", "check", "--output-format=concise",
+         "--quiet", str(target)],
         capture_output=True, text=True)
     if proc.returncode == 0:
         return 0
@@ -34,14 +38,24 @@ def run_ruff(target: Path) -> int:
 
 
 def run_ty(target: Path) -> int | None:
-    """Type-check generated code with ty if available; None when not installed."""
+    """Type-check generated code with ty if available; None when not installed.
+
+    Excludes unresolved-import errors (environmental noise — generated project
+    deps are not installed in demagic's venv).
+    """
     ty = shutil.which("ty")
     if ty is None:
         return None
-    proc = subprocess.run([ty, "check", str(target)], capture_output=True, text=True)
+    proc = subprocess.run(
+        [ty, "check", "--ignore", "unresolved-import", str(target)],
+        capture_output=True, text=True)
     if proc.returncode == 0:
         return 0
-    return max(1, len([line for line in proc.stdout.splitlines() if line.strip()]))
+    count = len([
+        line for line in proc.stdout.splitlines()
+        if line.startswith("error[") and "unresolved-import" not in line
+    ])
+    return count
 
 
 def run_verification(workdir: Path, out_dir: Path) -> VerificationResult:
