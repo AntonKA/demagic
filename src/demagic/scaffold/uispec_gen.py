@@ -4,7 +4,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from demagic.ir.models import ProgramIR
+from demagic.ir.models import MenuEntryIR, ProgramIR
 
 
 def write_ui_specs(programs: list[ProgramIR], out_dir: Path) -> dict[str, str]:
@@ -24,3 +24,18 @@ def write_ui_specs(programs: list[ProgramIR], out_dir: Path) -> dict[str, str]:
             path.write_text(json.dumps(spec, indent=2), encoding="utf-8")
             written[form.artifact_id] = str(path)
     return written
+
+
+def write_menu_spec(menus: list[MenuEntryIR], out_dir: Path) -> str | None:
+    """Write menus.json to *out_dir* and return its path string.
+
+    Returns None if *menus* is empty.
+    """
+    if not menus:
+        return None
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / "menus.json"
+    path.write_text(
+        json.dumps([m.model_dump() for m in menus], indent=2), encoding="utf-8"
+    )
+    return str(path)

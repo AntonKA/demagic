@@ -1,12 +1,13 @@
 """Stage 3: scaffold - generate the target FastAPI + SQLModel project."""
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 from demagic.ir.models import ProjectIR
 from demagic.ledger.ledger import ArtifactStatus, Ledger
-from demagic.scaffold.models_gen import generate_models
-from demagic.scaffold.uispec_gen import write_ui_specs
+from demagic.scaffold.models_gen import _safe_identifier, generate_models
+from demagic.scaffold.uispec_gen import write_menu_spec, write_ui_specs
 
 PENDING_MARKER = "DEMAGIC-PENDING"
 
@@ -44,12 +45,17 @@ def run() -> dict:
 '''
 
 
+def _doc(s: str) -> str:
+    """Sanitize a free-text string for safe embedding inside a triple-quoted docstring."""
+    return s.replace("\\", "\\\\").replace('"""', r'\"\"\"')
+
+
 def _summarize(prg) -> str:
     lines = []
     for lu in prg.logic_units:
         ops = ", ".join(f"{k}x{v}" for k, v in lu.operations.items()) or "none"
-        lines.append(f"    - [{lu.level}] ops: {ops}; "
-                     f"exprs: {[e.text for e in lu.expressions]}")
+        expr_texts = [_doc(e.text) for e in lu.expressions]
+        lines.append(f"    - [{lu.level}] ops: {ops}; exprs: {expr_texts}")
     return "\n".join(lines) or "    - (empty)"
 
 
@@ -59,60 +65,83 @@ def scaffold_project(project: ProjectIR, out_dir: Path, workdir: Path) -> None:
     (app_dir / "services").mkdir(parents=True, exist_ok=True)
     ledger = Ledger.load(workdir)
 
+    # Sanitize pyproject name: lowercase alphanumeric + hyphens only
+    safe_pkg_name = re.sub(r"[^a-z0-9]+", "-", project.name.lower()).strip("-") or "converted-app"
     (out_dir / "pyproject.toml").write_text(
-        _PYPROJECT.format(name=project.name.lower()), encoding="utf-8")
+        _PYPROJECT.format(name=safe_pkg_name), encoding="utf-8")
 
     # models.py from data objects
-    models_code = generate_models(project.data_objects)
+    result = generate_models(project.data_objects)
+    models_code = result.code
     (app_dir / "models.py").write_text(models_code, encoding="utf-8")
-    for obj in project.data_objects:
-        if obj.object_type == "S" or obj.sp_type:
-            ledger.set_status(obj.artifact_id, ArtifactStatus.FLAGGED,
-                              reason="stored procedure - not expressible as SQLModel",
-                              output_path=str(app_dir / "models.py"))
-        else:
-            ledger.set_status(obj.artifact_id, ArtifactStatus.CONVERTED,
-                              output_path=str(app_dir / "models.py"))
+
+    # Drive ledger transitions from ModelsResult instead of re-testing object_type/sp_type
+    for artifact_id in result.converted:
+        ledger.set_status(artifact_id, ArtifactStatus.CONVERTED,
+                          output_path=str(app_dir / "models.py"))
+    for artifact_id, reason in result.flagged.items():
+        ledger.set_status(artifact_id, ArtifactStatus.FLAGGED,
+                          reason=reason,
+                          output_path=str(app_dir / "models.py"))
 
     # one service module per program with a pending marker
     headers = {h.prog_id: h for h in project.program_headers}
     routes: list[str] = []
+    used_fn_names: dict[str, int] = {}
+
     for prg in project.programs:
         header = headers.get(prg.prog_id)
         desc = header.description if header else (
             prg.task_descriptions[0] if prg.task_descriptions else "")
         expr_count = sum(len(lu.expressions) for lu in prg.logic_units)
         code = _SERVICE_TEMPLATE.format(
-            prog_id=prg.prog_id, description=desc, artifact_id=prg.artifact_id,
+            prog_id=prg.prog_id, description=_doc(desc), artifact_id=prg.artifact_id,
             lu_count=len(prg.logic_units), expr_count=expr_count,
             summary=_summarize(prg), marker=PENDING_MARKER)
         (app_dir / "services" / f"prg_{prg.prog_id}.py").write_text(code, encoding="utf-8")
 
         if header and header.public_name:
+            # Sanitize route function name; deduplicate with counter
+            base_fn = _safe_identifier(header.public_name, f"prg_{prg.prog_id}")
+            if base_fn in used_fn_names:
+                used_fn_names[base_fn] += 1
+                fn = f"{base_fn}{used_fn_names[base_fn]}"
+            else:
+                used_fn_names[base_fn] = 1
+                fn = base_fn
+            # Path stays as the raw public_name (URL path)
             routes.append(
                 f'\n\n@app.get("/{header.public_name}")\n'
-                f"def {header.public_name}() -> dict:\n"
-                f'    """{desc} (Magic program #{prg.prog_id})."""\n'
+                f"def {fn}() -> dict:\n"
+                f'    """{_doc(desc)} (Magic program #{prg.prog_id})."""\n'
                 f"    from app.services.prg_{prg.prog_id} import run\n"
                 f"    return run()\n")
 
     (app_dir / "__init__.py").write_text("", encoding="utf-8")
     (app_dir / "services" / "__init__.py").write_text("", encoding="utf-8")
     (app_dir / "main.py").write_text(
-        _MAIN_HEADER.format(name=project.name) + "".join(routes), encoding="utf-8")
+        _MAIN_HEADER.format(name=_doc(project.name)) + "".join(routes), encoding="utf-8")
 
     # UI specs; forms count as covered once their spec exists
     written = write_ui_specs(project.programs, out_dir / "ui-specs")
     for artifact_id, path in written.items():
         ledger.set_status(artifact_id, ArtifactStatus.CONVERTED, output_path=path)
 
-    # menus are navigation metadata -> covered by the UI spec bundle
+    # menus: write menus.json and set each menu entry CONVERTED with that path
+    menu_spec_path = write_menu_spec(project.menus, out_dir / "ui-specs")
+
     def mark_menu(entry) -> None:
-        ledger.set_status(entry.artifact_id, ArtifactStatus.CONVERTED,
-                          output_path=str(out_dir / "ui-specs"))
+        ledger.set_status(
+            entry.artifact_id, ArtifactStatus.CONVERTED,
+            output_path=menu_spec_path or str(out_dir / "ui-specs"))
         for child in entry.children:
             mark_menu(child)
+
     for menu in project.menus:
         mark_menu(menu)
+
+    # Mark the project-level artifact CONVERTED (the scaffold IS the project conversion)
+    ledger.set_status(project.artifact_id, ArtifactStatus.CONVERTED,
+                      output_path=str(out_dir))
 
     ledger.save()

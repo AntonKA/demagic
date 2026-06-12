@@ -7,7 +7,8 @@ from demagic.scaffold.models_gen import generate_models
 
 def test_generates_valid_sqlmodel_code(sample_source: Path):
     objs = parse_datasources(sample_source / "DataSources.xml")
-    code = generate_models(objs)
+    result = generate_models(objs)
+    code = result.code
 
     ast.parse(code)  # must be syntactically valid Python
     assert "class Customer(SQLModel, table=True):" in code
@@ -19,6 +20,7 @@ def test_generates_valid_sqlmodel_code(sample_source: Path):
 
 def test_stored_procedures_become_comments_not_classes(sample_source: Path):
     objs = parse_datasources(sample_source / "DataSources.xml")
-    code = generate_models(objs)
+    result = generate_models(objs)
+    code = result.code
     assert "class GetOrderTotals" not in code
     assert "p_GetOrderTotals" in code  # documented as a flagged SP stub
