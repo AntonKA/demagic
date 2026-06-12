@@ -21,6 +21,10 @@ Assumptions:
 {code}
 '''
 
+# Success-path ledger saves are batched; the error path still saves
+# immediately so a crash never loses a FLAGGED status.
+_SAVE_EVERY = 50
+
 
 def translate_all(project: ProjectIR, workdir: Path, out_dir: Path,
                   model: Model | str, only_unit: str | None = None,
@@ -31,6 +35,7 @@ def translate_all(project: ProjectIR, workdir: Path, out_dir: Path,
     programs = {p.prog_id: p for p in project.programs}
     results: dict[str, TranslationResult] = {}
     usage_totals = {"requests": 0, "input_tokens": 0, "output_tokens": 0}
+    done_since_save = 0
 
     for prog_id in order:
         prg = programs[prog_id]
@@ -77,8 +82,14 @@ def translate_all(project: ProjectIR, workdir: Path, out_dir: Path,
             for expr in lu.expressions:
                 ledger.set_status(expr.artifact_id, status, reason=reason,
                                   output_path=str(service_path))
-        ledger.save()
+        # On large projects the ledger is tens of MB; a full rewrite per
+        # program dominates wall time, so batch the success-path saves.
+        done_since_save += 1
+        if done_since_save >= _SAVE_EVERY:
+            ledger.save()
+            done_since_save = 0
 
+    ledger.save()
     (Path(workdir) / "usage.json").write_text(
         json.dumps(usage_totals, indent=2), encoding="utf-8")
     return results
