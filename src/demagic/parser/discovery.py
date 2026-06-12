@@ -41,19 +41,20 @@ def _find_source_dir(project_root: Path) -> Path | None:
 def discover_projects(base: Path) -> list[DiscoveredProject]:
     base = Path(base)
     projects: list[DiscoveredProject] = []
-    seen_roots: set[Path] = set()
 
     markers = list(base.rglob("*.xpaproj"))
-    marker_roots = {m.parent for m in markers}
-    # Also catch bare Source dirs with no .xpaproj next to them
+    marker_roots: set[Path] = {m.parent for m in markers}
+    # Also catch bare Source dirs with no .xpaproj next to them (DataSources.xml present)
     for ds in base.rglob("DataSources.xml"):
         root = ds.parent.parent if ds.parent.name == "Source" else ds.parent
         marker_roots.add(root)
+    # Also catch Prg-only projects (no DataSources.xml, just Prg_*.xml)
+    for prg in base.rglob("Prg_*.xml"):
+        parent = prg.parent
+        root = parent.parent if parent.name == "Source" else parent
+        marker_roots.add(root)
 
     for root in sorted(marker_roots):
-        if root in seen_roots:
-            continue
-        seen_roots.add(root)
         source_dir = _find_source_dir(root)
         if source_dir is None:
             continue

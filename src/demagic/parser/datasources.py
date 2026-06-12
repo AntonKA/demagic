@@ -28,12 +28,18 @@ def _parse_index(idx: ET.Element) -> IndexIR:
 def parse_datasources(path: Path) -> list[DataObjectIR]:
     root = ET.parse(path).getroot()
     objects: list[DataObjectIR] = []
-    for obj in root.findall(".//DataObject"):
-        obj_id = obj.get("id", "")
+    seen_artifact_ids: dict[str, int] = {}
+    for i, obj in enumerate(root.findall(".//DataObject")):
+        raw_id = obj.get("id", "").strip()
+        obj_id = raw_id if raw_id else f"idx{i}"
+        base_aid = f"ds:{obj_id}"
+        count = seen_artifact_ids.get(base_aid, 0) + 1
+        seen_artifact_ids[base_aid] = count
+        artifact_id = base_aid if count == 1 else f"{base_aid}#{count}"
         obj_type_el = obj.find("ObjectType")
         sp_type_el = obj.find("SPType")
         objects.append(DataObjectIR(
-            artifact_id=f"ds:{obj_id}",
+            artifact_id=artifact_id,
             obj_id=obj_id,
             physical_name=obj.get("PhysicalName", ""),
             magic_name=obj.get("name", ""),

@@ -1,6 +1,7 @@
 """Stage 1: scan - parse a project into IR and register every artifact."""
 from __future__ import annotations
 
+import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from demagic.ir.models import ProjectIR
@@ -23,30 +24,84 @@ def scan_project(project_root: Path, workdir: Path) -> ProjectIR:
     candidates = discover_projects(project_root)
     if not candidates:
         raise FileNotFoundError(f"No Magic xpa project found under {project_root}")
+    if len(candidates) > 1:
+        desc = ", ".join(f"{c.name}({c.fingerprint})" for c in candidates)
+        raise ValueError(
+            f"Multiple projects found under {project_root}: {desc}. "
+            "Point at a single project directory."
+        )
     discovered = candidates[0]
     src = discovered.source_dir
 
+    ledger = Ledger.load(workdir)
+
+    # --- DataSources.xml ---
     ds_path = src / "DataSources.xml"
+    if ds_path.exists():
+        try:
+            data_objects = parse_datasources(ds_path)
+        except ET.ParseError as exc:
+            data_objects = []
+            aid = "src:DataSources.xml"
+            ledger.register(aid, kind="unparsed_xml")
+            ledger.set_status(aid, ArtifactStatus.UNPARSED,
+                              reason=f"XML parse error: {exc}")
+    else:
+        data_objects = []
+
+    # --- ProgramHeaders.xml ---
     ph_path = src / "ProgramHeaders.xml"
+    if ph_path.exists():
+        try:
+            program_headers = parse_program_headers(ph_path)
+        except ET.ParseError as exc:
+            program_headers = []
+            aid = "src:ProgramHeaders.xml"
+            ledger.register(aid, kind="unparsed_xml")
+            ledger.set_status(aid, ArtifactStatus.UNPARSED,
+                              reason=f"XML parse error: {exc}")
+    else:
+        program_headers = []
+
+    # --- Prg_*.xml ---
+    programs = []
+    for p in sorted(src.glob("Prg_*.xml")):
+        programs.append(parse_program(p))
+
+    # --- Menus.xml ---
+    menus_path = src / "Menus.xml"
+    if menus_path.exists():
+        try:
+            menus = parse_menus(menus_path)
+        except ET.ParseError as exc:
+            menus = []
+            aid = "src:Menus.xml"
+            ledger.register(aid, kind="unparsed_xml")
+            ledger.set_status(aid, ArtifactStatus.UNPARSED,
+                              reason=f"XML parse error: {exc}")
+    else:
+        menus = []
+
     project = ProjectIR(
         artifact_id=f"prj:{discovered.name}",
         name=discovered.name,
         source_dir=str(src),
-        data_objects=parse_datasources(ds_path) if ds_path.exists() else [],
-        program_headers=parse_program_headers(ph_path) if ph_path.exists() else [],
-        programs=[parse_program(p) for p in sorted(src.glob("Prg_*.xml"))],
-        menus=parse_menus(src / "Menus.xml"),
+        data_objects=data_objects,
+        program_headers=program_headers,
+        programs=programs,
+        menus=menus,
     )
 
-    ledger = Ledger.load(workdir)
-    _register_all(project, ledger)
+    _register_all(project, ledger, program_headers)
     for f in sorted(src.glob("*.xml")):
         if f.name in _HANDLED_FILES or f.name.startswith("Prg_"):
             continue
         aid = f"src:{f.name}"
+        # Only register if not already registered (e.g. parse-error path above)
         ledger.register(aid, kind="unparsed_xml")
-        ledger.set_status(aid, ArtifactStatus.UNPARSED,
-                          reason=f"Source file {f.name} has no dedicated parser yet")
+        if ledger.get(aid).status == ArtifactStatus.PENDING:
+            ledger.set_status(aid, ArtifactStatus.UNPARSED,
+                              reason=f"Source file {f.name} has no dedicated parser yet")
     ledger.save()
 
     workdir.mkdir(parents=True, exist_ok=True)
@@ -60,10 +115,13 @@ def _register_menu(entry, ledger: Ledger) -> None:
         _register_menu(child, ledger)
 
 
-def _register_all(project: ProjectIR, ledger: Ledger) -> None:
+def _register_all(project: ProjectIR, ledger: Ledger, program_headers) -> None:
     ledger.register(project.artifact_id, kind="project")
     for obj in project.data_objects:
         ledger.register(obj.artifact_id, kind="data_object")
+    # Register all program headers so reconcile() can detect missing Prg_*.xml
+    for hdr in program_headers:
+        ledger.register(hdr.artifact_id, kind="program")
     for prg in project.programs:
         ledger.register(prg.artifact_id, kind="program")
         for lu in prg.logic_units:

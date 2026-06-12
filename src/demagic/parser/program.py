@@ -29,7 +29,7 @@ def _local(tag: str) -> str:
 
 
 def parse_program(path: Path) -> ProgramIR:
-    prog_id = path.stem.replace("Prg_", "")
+    prog_id = path.stem.removeprefix("Prg_")
     prg = ProgramIR(artifact_id=f"prg:{prog_id}", prog_id=prog_id)
     try:
         root = ET.parse(path).getroot()

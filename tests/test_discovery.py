@@ -25,3 +25,15 @@ def test_duplicate_projects_share_fingerprint(sample_repo: Path, tmp_path: Path)
 
 def test_no_projects_in_empty_tree(tmp_path: Path):
     assert discover_projects(tmp_path) == []
+
+
+def test_discovers_prg_only_project(tmp_path: Path):
+    """I3: project with only Source/Prg_1.xml (no DataSources.xml) is discovered."""
+    src = tmp_path / "PrgOnlyApp" / "Source"
+    src.mkdir(parents=True)
+    (src / "Prg_1.xml").write_text("<Application/>", encoding="utf-8")
+
+    projects = discover_projects(tmp_path)
+    assert len(projects) == 1
+    assert projects[0].name == "PrgOnlyApp"
+    assert projects[0].prg_count == 1
