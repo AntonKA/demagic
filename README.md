@@ -52,8 +52,8 @@ Source XML
 ## Quickstart
 
 ```bash
-# Install
-uv tool install demagic
+# Install (includes the Anthropic provider)
+uv tool install "demagic[anthropic]"
 
 # Set your LLM provider API key
 export ANTHROPIC_API_KEY=sk-ant-...

@@ -52,8 +52,13 @@ def translate_all(project: ProjectIR, workdir: Path, out_dir: Path,
         try:
             ast.parse(result.python_code)
         except SyntaxError as exc:
-            ledger.set_status(prg.artifact_id, ArtifactStatus.FLAGGED,
-                              reason=f"LLM output failed ast.parse: {exc}")
+            parse_reason = f"LLM output failed ast.parse: {exc}"
+            ledger.set_status(prg.artifact_id, ArtifactStatus.FLAGGED, reason=parse_reason)
+            for lu in prg.logic_units:
+                ledger.set_status(lu.artifact_id, ArtifactStatus.FLAGGED, reason=parse_reason)
+                for expr in lu.expressions:
+                    ledger.set_status(expr.artifact_id, ArtifactStatus.FLAGGED,
+                                      reason=parse_reason)
             ledger.save()
             continue
 

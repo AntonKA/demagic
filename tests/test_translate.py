@@ -56,5 +56,6 @@ def test_invalid_python_is_flagged_not_written(sample_repo: Path, tmp_path: Path
     translate_all(project, workdir, out, model=model)
     led = Ledger.load(workdir)
     assert led.get("prg:1").status == ArtifactStatus.FLAGGED
+    assert led.get("prg:1/lu:0").status == ArtifactStatus.FLAGGED
     svc = (out / "app" / "services" / "prg_1.py").read_text(encoding="utf-8")
     assert "DEMAGIC-PENDING" in svc  # stub untouched

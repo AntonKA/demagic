@@ -174,7 +174,7 @@ dev = [
 requires-dist = [
     { name = "jinja2", specifier = ">=3.1" },
     { name = "pydantic", specifier = ">=2.7" },
-    { name = "pydantic-ai-slim", specifier = ">=0.2" },
+    { name = "pydantic-ai-slim", specifier = ">=1.0" },
     { name = "pydantic-ai-slim", extras = ["anthropic"], marker = "extra == 'anthropic'" },
     { name = "pydantic-ai-slim", extras = ["openai"], marker = "extra == 'openai'" },
     { name = "pyyaml", specifier = ">=6.0" },
