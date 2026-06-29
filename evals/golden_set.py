@@ -139,7 +139,7 @@ def _snippet_and_sp() -> GoldenCase:
         ],
         snippets=[
             "public static string ToLocal(DateTime utc) {\n"
-            "  var tz = TimeZoneInfo.FindSystemTimeZoneById(\"E. Australia Standard Time\");\n"
+            "  var tz = TimeZoneInfo.FindSystemTimeZoneById(\"Eastern Standard Time\");\n"
             "  return TimeZoneInfo.ConvertTimeFromUtc(utc, tz).ToString();\n}"
         ],
         dotnet_types=["System.TimeZoneInfo"],
