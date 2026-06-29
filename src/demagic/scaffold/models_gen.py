@@ -40,6 +40,27 @@ def _safe_identifier(name: str, fallback: str) -> str:
     return s
 
 
+_DATA_FILE_EXT = (".xml", ".dat", ".sqlite", ".db", ".dbf", ".csv", ".idx")
+
+
+def _clean_tablename(physical: str) -> tuple[str, bool]:
+    """Return ``(sql_safe_name, changed)``.
+
+    Magic file/ISAM data sources carry names like ``ActionItems.xml`` that are
+    not valid SQL table identifiers. A real SQL table name is already a bare
+    identifier, so only file/odd names get rewritten.
+    """
+    if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", physical):
+        return physical, False
+    name = physical
+    for ext in _DATA_FILE_EXT:
+        if name.lower().endswith(ext):
+            name = name[: -len(ext)]
+            break
+    cleaned = _safe_identifier(name, "table")
+    return cleaned, cleaned != physical
+
+
 def _class_name(magic_name: str) -> str:
     cleaned = re.sub(r"[^0-9A-Za-z]+", " ", magic_name).title().replace(" ", "")
     # De-pluralize: strip trailing 's' only when len > 3 and not ending in 'ss'/'us'
@@ -122,19 +143,26 @@ def generate_models(objects: list[DataObjectIR]) -> ModelsResult:
         pk_cols: set[str] = set(pk_index.columns) if pk_index else set()
 
         has_pk = bool(pk_cols)
-        body = [f"class {cls}(SQLModel, table=True):",
-                f'    __tablename__ = "{obj.physical_name}"',
-                ""]
+        tablename, tn_changed = _clean_tablename(obj.physical_name)
+        reasons: list[str] = []
 
+        body = [f"class {cls}(SQLModel, table=True):",
+                f'    __tablename__ = "{tablename}"']
+        if tn_changed:
+            body.append(
+                f"    # source: {obj.physical_name} - file/non-SQL Magic data source")
+            reasons.append(
+                f"file/non-SQL source '{obj.physical_name}' - tablename sanitised to "
+                f"'{tablename}'; map to a real table before use")
         if not has_pk:
-            body.insert(
-                2,
+            body.append(
                 "    # FLAGGED: no unique index in Magic source - "
-                "define a primary key before use",
-            )
-            flagged[obj.artifact_id] = (
-                f"table {obj.physical_name} has no unique index; primary key undefined"
-            )
+                "define a primary key before use")
+            reasons.append(
+                f"table {tablename} has no unique index; primary key undefined")
+        body.append("")
+        if reasons:
+            flagged[obj.artifact_id] = "; ".join(reasons)
 
         for i, col in enumerate(obj.columns):
             py_type = magic_type_to_python(col.magic_type)
