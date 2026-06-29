@@ -6,3 +6,15 @@ dist/
 .pytest_cache/
 .ruff_cache/
 *.egg-info/
+
+# Secrets - never commit. Set provider keys via env vars (see README).
+.env
+.env.*
+*.pem
+*.key
+*.pfx
+*.p12
+*.crt
+id_rsa*
+secrets.*
+credentials*
