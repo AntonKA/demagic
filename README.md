@@ -8,7 +8,7 @@
 
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-22d3ee.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-818cf8.svg)](https://python.org)
-[![Coverage Ledger](https://img.shields.io/badge/coverage-100%25_accounted-34d399.svg)](#the-coverage-ledger-the-whole-point)
+[![Coverage Ledger](https://img.shields.io/badge/coverage-100%25_accounted-34d399.svg)](#nothing-gets-silently-dropped)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-e879f9.svg)](#contributing)
 [![Tests](https://img.shields.io/badge/tests-66_passing-22d3ee.svg)](tests/)
 [![No API key needed](https://img.shields.io/badge/API_key-not_required-34d399.svg)](#quickstart--let-your-ai-agent-do-it-)
@@ -31,7 +31,7 @@ When a shop finally decides to leave, they hit a wall: **rewrite everything by h
 
 ---
 
-## The Coverage Ledger (the whole point)
+## Nothing gets silently dropped
 
 Most "AI migration" tools convert what they understand and quietly skip the rest — so you ship a system that's secretly full of holes. demagic refuses to do that.
 
