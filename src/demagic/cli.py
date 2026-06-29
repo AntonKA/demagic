@@ -48,8 +48,20 @@ def translate(
     model: str | None = typer.Option(None, help="e.g. anthropic:claude-sonnet-4-5"),
     unit: str | None = typer.Option(None, help="Translate a single artifact id"),
 ) -> None:
-    """LLM-translate program logic into the scaffolded services (resumable)."""
-    from demagic.translate.runner import translate_all  # lazy: needs provider extras
+    """LLM-translate program logic into the scaffolded services (resumable).
+
+    Optional headless mode - needs the `[api]` extra. The default, no-API-key
+    path is agent-driven: `demagic init` + `demagic pack` + your editor's agent.
+    """
+    try:
+        from demagic.translate.runner import translate_all
+    except ImportError:
+        typer.echo(
+            "Headless --model translation needs the API extra: "
+            'pip install "demagic[anthropic]" (or [openai]/[api]).\n'
+            "Or use the no-API-key agent flow: demagic init, then ask your editor's "
+            "AI agent to convert the app (see demagic pack).", err=True)
+        raise typer.Exit(2) from None
     model_name = model or os.environ.get("DEMAGIC_MODEL")
     if not model_name:
         typer.echo("Set --model or DEMAGIC_MODEL (e.g. anthropic:claude-sonnet-4-5)", err=True)
@@ -90,7 +102,7 @@ def pack(
     output to your agent, have it write run() bodies into the service stubs,
     then run `demagic verify` to reconcile.
     """
-    from demagic.translate.agent import SYSTEM_PROMPT, build_context_pack
+    from demagic.translate.context import SYSTEM_PROMPT, build_context_pack
     project = load_ir(workdir)
     programs = project.programs
     if artifact:
@@ -145,7 +157,15 @@ def run_all(
     analyze_project(project)
     scaffold_project(project, out, workdir)
     if not skip_translate:
-        from demagic.translate.runner import translate_all
+        try:
+            from demagic.translate.runner import translate_all
+        except ImportError:
+            typer.echo(
+                "Headless translate needs the API extra (pip install "
+                '"demagic[anthropic]"). For the no-key path, use --skip-translate '
+                "then let your editor's AI agent fill the stubs (demagic init).",
+                err=True)
+            raise typer.Exit(2) from None
         model_name = model or os.environ.get("DEMAGIC_MODEL")
         if not model_name:
             typer.echo("Set --model or DEMAGIC_MODEL for translate", err=True)

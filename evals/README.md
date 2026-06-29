@@ -2,7 +2,7 @@
 
 A small, deterministic, zero-API-cost harness for measuring and improving the
 quality of the LLM translate stage (the prompt in
-`src/demagic/translate/agent.py`).
+`src/demagic/translate/context.py`).
 
 The translate stage is the one part of demagic whose output quality depends on a
 prompt rather than on deterministic code. This harness lets you change that

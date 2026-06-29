@@ -10,7 +10,8 @@ from pydantic_ai.models import Model
 from demagic.analyze.graph import analyze_project
 from demagic.ir.models import ProjectIR
 from demagic.ledger.ledger import ArtifactStatus, Ledger
-from demagic.translate.agent import TranslationResult, build_agent, build_context_pack
+from demagic.translate.agent import TranslationResult, build_agent
+from demagic.translate.context import build_context_pack
 
 # Provenance goes in a COMMENT block, not a docstring: the translated code
 # usually starts with its own module docstring/imports, and a second docstring

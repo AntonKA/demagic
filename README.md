@@ -10,7 +10,8 @@
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-818cf8.svg)](https://python.org)
 [![Coverage Ledger](https://img.shields.io/badge/coverage-100%25_accounted-34d399.svg)](#the-coverage-ledger-the-whole-point)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-e879f9.svg)](#contributing)
-[![Tests](https://img.shields.io/badge/tests-59_passing-22d3ee.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-66_passing-22d3ee.svg)](tests/)
+[![No API key needed](https://img.shields.io/badge/API_key-not_required-34d399.svg)](#quickstart--let-your-ai-agent-do-it-)
 
 [Quickstart](#quickstart) · [What it converts](#what-actually-gets-converted) · [How it works](#how-it-works) · [Roadmap](#roadmap) · [Legal](#legal--trademarks)
 
@@ -71,46 +72,28 @@ Meanwhile a 70-logic-unit monster full of Win32 calls, raw SOAP, and embedded C#
 
 ---
 
-## Quickstart
+## Quickstart — let your AI agent do it ⭐
 
-```bash
-# install (the [anthropic] extra ships the default model provider)
-uv tool install "demagic[anthropic]"
-export ANTHROPIC_API_KEY=...          # only the translate stage needs a key
-
-# convert one project, end to end
-demagic run-all ./MyMagicApp --out ./myapp-python --model anthropic:claude-sonnet-4-5
-```
-
-No API key yet? Run everything except the LLM step for free — it still produces the data model, API surface, UI specs, and a full coverage report:
-
-```bash
-demagic run-all ./MyMagicApp --out ./myapp-python --skip-translate
-```
-
-> Point demagic at **one** project folder (the one holding the `.xpaproj` or `Source/`). Other providers work too — `--model openai:gpt-5.2`, `--model ollama:qwen3`, or set `DEMAGIC_MODEL`.
-
----
-
-## Use it with your AI coding agent (no API key) ⭐
-
-The easiest way — let the AI agent you **already** use (Claude Code, Cursor, Copilot, Aider, Codex, Cline, Zed…) be the translation engine, on its own model and tokens. No separate key, no extra bill.
+demagic is a **lightweight CLI your AI coding agent drives** (Claude Code, Cursor, Copilot, Aider, Codex, Cline, Zed…). The agent does the translation on **its own model and tokens** — no API key, no extra bill, no LLM SDK in the install.
 
 ```bash
 uv tool install demagic        # or: pipx install demagic / pip install demagic
 cd my-magic-project
-demagic init                   # writes AGENTS.md so your agent knows the workflow
+demagic init                   # teaches your agent the workflow (writes AGENTS.md)
 ```
 
 Then just tell your agent:
 
 > **"Convert this Magic xpa app to Python with demagic."**
 
-It runs the deterministic stages (free), reads the per-program context with `demagic pack`, writes the `run()` bodies into the generated stubs using the tuned rules, and `demagic verify` reconciles its edits back into the Coverage Ledger — flipping each program to **converted** (or **flagged** if it left a `# DEMAGIC-FLAG:` note). The ledger guarantees your agent can't quietly skip anything.
+That's it. The agent runs the deterministic stages (free), pulls each program's context with `demagic pack`, writes the `run()` bodies into the generated stubs using the tuned rules, and `demagic verify` reconciles its edits into the Coverage Ledger — flipping each program to **converted** (or **flagged** if it left a `# DEMAGIC-FLAG:` note). The ledger guarantees your agent **can't quietly skip anything**.
 
-`demagic init` writes `AGENTS.md` by default (read by most agents); add `--cursor`, `--claude`, `--copilot`, or `--all` for editor-specific files.
+`demagic init` writes `AGENTS.md` by default; add `--cursor`, `--claude`, `--copilot`, or `--all` for editor-specific files. Point demagic at **one** project folder (the one holding the `.xpaproj` or `Source/`).
 
-> Prefer a hands-off batch run or CI? The `--model` API mode above does the same translation without an agent in the loop.
+> **No agent?** Run the deterministic pipeline yourself for free — it still produces the data model, API surface, UI specs, and a full coverage report:
+> ```bash
+> demagic run-all ./MyMagicApp --out ./myapp-python --skip-translate
+> ```
 
 ---
 
@@ -143,7 +126,14 @@ Five stages. Only stage 4 spends tokens; the rest are pure, deterministic Python
 
 `scan` parses every Magic Source file into a typed Intermediate Representation and registers each artifact. `analyze` builds the call graph and a dependency-first translation order. `scaffold` generates the runnable target project. `translate` ports the business logic (resumable — re-runs skip finished programs and track token usage). `verify` proves the ledger is complete and the generated code passes static checks.
 
-Per-stage commands (`demagic scan|analyze|scaffold|translate|verify|report`) give you fine control; `run-all` does the whole thing.
+Per-stage commands (`demagic scan|analyze|scaffold|pack|verify|report`) give you fine control; `run-all` does the whole thing.
+
+> **Advanced — headless translation (optional).** Prefer to translate in CI with no agent in the loop? Install the API extra and demagic will call an LLM provider itself:
+> ```bash
+> pip install "demagic[anthropic]"   # or [openai] / [api]
+> demagic run-all ./MyMagicApp --out ./out --model anthropic:claude-sonnet-4-5
+> ```
+> The base install stays light and key-free; this just adds the provider SDK.
 
 ---
 

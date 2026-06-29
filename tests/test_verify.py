@@ -1,12 +1,16 @@
 from pathlib import Path
 
-from pydantic_ai.models.test import TestModel
+import pytest
 
-from demagic.scaffold.project_gen import scaffold_project
-from demagic.scan import scan_project
-from demagic.translate.runner import translate_all
-from demagic.verify.checks import run_verification
-from demagic.verify.report import write_report
+pytest.importorskip("pydantic_ai")  # this test drives the optional [api] translate path
+
+from pydantic_ai.models.test import TestModel  # noqa: E402
+
+from demagic.scaffold.project_gen import scaffold_project  # noqa: E402
+from demagic.scan import scan_project  # noqa: E402
+from demagic.translate.runner import translate_all  # noqa: E402
+from demagic.verify.checks import run_verification  # noqa: E402
+from demagic.verify.report import write_report  # noqa: E402
 
 
 def _full_pipeline(sample_repo: Path, tmp_path: Path):

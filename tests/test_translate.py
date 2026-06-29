@@ -1,12 +1,16 @@
 from pathlib import Path
 
-from pydantic_ai.models.test import TestModel
+import pytest
 
-from demagic.ledger.ledger import ArtifactStatus, Ledger
-from demagic.scaffold.project_gen import scaffold_project
-from demagic.scan import scan_project
-from demagic.translate.agent import build_context_pack
-from demagic.translate.runner import translate_all
+pytest.importorskip("pydantic_ai")  # optional [api] extra
+
+from pydantic_ai.models.test import TestModel  # noqa: E402
+
+from demagic.ledger.ledger import ArtifactStatus, Ledger  # noqa: E402
+from demagic.scaffold.project_gen import scaffold_project  # noqa: E402
+from demagic.scan import scan_project  # noqa: E402
+from demagic.translate.context import build_context_pack  # noqa: E402
+from demagic.translate.runner import translate_all  # noqa: E402
 
 
 def _prepared(sample_repo: Path, tmp_path: Path):

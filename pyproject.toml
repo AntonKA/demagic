@@ -15,18 +15,21 @@ classifiers = [
     "Topic :: Software Development :: Code Generators",
 ]
 keywords = ["magic-xpa", "unipaas", "edeveloper", "4gl", "legacy-migration", "modernization", "transpiler", "llm"]
+# Light by default: no LLM SDK. The agent-driven flow (demagic init / pack /
+# verify) needs none of it - your editor's AI agent does the translation.
 dependencies = [
     "pydantic>=2.7",
     "typer>=0.12",
-    "jinja2>=3.1",
     "pyyaml>=6.0",
-    "pydantic-ai-slim>=1.0",
     "ruff>=0.8",
 ]
 
 [project.optional-dependencies]
-anthropic = ["pydantic-ai-slim[anthropic]"]
-openai = ["pydantic-ai-slim[openai]"]
+# Optional headless translate mode (demagic translate --model ...). Most users
+# don't need this - prefer the agent-driven flow.
+api = ["pydantic-ai-slim>=1.0"]
+anthropic = ["pydantic-ai-slim[anthropic]>=1.0"]
+openai = ["pydantic-ai-slim[openai]>=1.0"]
 
 [project.urls]
 Homepage = "https://github.com/AntonKA/demagic"
@@ -41,7 +44,8 @@ requires = ["uv_build>=0.6"]
 build-backend = "uv_build"
 
 [dependency-groups]
-dev = ["pytest>=8.0", "ty"]
+# pydantic-ai-slim is in dev so the optional-API tests run in CI.
+dev = ["pytest>=8.0", "ty", "pydantic-ai-slim>=1.0"]
 
 [tool.ruff]
 line-length = 100

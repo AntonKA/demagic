@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from demagic.translate.agent import SYSTEM_PROMPT
+from demagic.translate.context import SYSTEM_PROMPT
 
 START = "<!-- demagic:start -->"
 END = "<!-- demagic:end -->"
@@ -32,6 +32,10 @@ free; you do the business-logic translation using your own model, so the user
 spends no extra API tokens.
 
 ### The loop
+
+0. **Make sure demagic is installed** (no API key needed): if the `demagic`
+   command is missing, run `uv tool install demagic` (or `pipx install demagic`,
+   or `pip install demagic`).
 
 1. **Scaffold (free, no key):**
    `demagic run-all <magic-project-dir> --out <out-dir> --workdir .demagic --skip-translate`
