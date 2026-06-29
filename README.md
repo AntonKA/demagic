@@ -6,6 +6,7 @@
 
 ### Drag your legacy Magic xpa apps into modern Python — and account for every line.
 
+[![CI](https://github.com/AntonKA/demagic/actions/workflows/ci.yml/badge.svg)](https://github.com/AntonKA/demagic/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-22d3ee.svg)](LICENSE)
 [![Python 3.12+](https://img.shields.io/badge/python-3.12%2B-818cf8.svg)](https://python.org)
 [![Coverage Ledger](https://img.shields.io/badge/coverage-100%25_accounted-34d399.svg)](#nothing-gets-silently-dropped)
@@ -156,7 +157,7 @@ The Magic-function-to-Python mapping lives in [`src/demagic/analyze/catalog.yaml
 
 ## Contributing
 
-Issues and PRs welcome. The best on-ramp: run `demagic scan` against a Magic app you have access to, open the coverage report, and find an `unparsed` tag or an unmapped function. Each is a small, self-contained contribution. (Please don't paste proprietary Magic XML into issues — the element/tag names are all we need.)
+Everyone's welcome — see **[CONTRIBUTING.md](CONTRIBUTING.md)** for the dev setup (`uv sync`, `pytest`, `ruff`, `ty`) and the easiest on-ramps. The smallest useful PR is a one-line function mapping in [`catalog.yaml`](src/demagic/analyze/catalog.yaml); the next is teaching the parser an `unparsed` tag from your coverage report. (Please don't paste proprietary Magic XML into issues — the element/tag names are all we need.) By participating you agree to the [Code of Conduct](CODE_OF_CONDUCT.md).
 
 ---
 
