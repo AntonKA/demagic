@@ -79,6 +79,59 @@ def report(workdir: Path = WorkdirOpt) -> None:
                else "No report yet - run verify first.")
 
 
+@app.command()
+def pack(
+    artifact: str | None = typer.Argument(None, help="Program id (e.g. prg:3 or 3); omit for all"),
+    workdir: Path = WorkdirOpt,
+) -> None:
+    """Print translation rules + context pack(s) for an AI agent to translate.
+
+    Use this when YOUR editor's agent is the translator (no API key): pipe the
+    output to your agent, have it write run() bodies into the service stubs,
+    then run `demagic verify` to reconcile.
+    """
+    from demagic.translate.agent import SYSTEM_PROMPT, build_context_pack
+    project = load_ir(workdir)
+    programs = project.programs
+    if artifact:
+        pid = artifact.split(":")[-1]
+        programs = [p for p in project.programs if p.prog_id == pid]
+        if not programs:
+            typer.echo(f"No program matching '{artifact}'", err=True)
+            raise typer.Exit(2)
+    typer.echo("# demagic translation rules\n")
+    typer.echo(SYSTEM_PROMPT)
+    for prg in programs:
+        typer.echo("\n" + "=" * 64)
+        typer.echo(f"# Write into: app/services/prg_{prg.prog_id}.py "
+                   "(replace the DEMAGIC-PENDING stub)")
+        typer.echo(build_context_pack(project, prg))
+
+
+@app.command()
+def init(
+    path: Path = typer.Argument(Path("."), help="Project root to make agent-aware"),
+    claude: bool = typer.Option(False, "--claude", help="Also write a Claude Code skill"),
+    cursor: bool = typer.Option(False, "--cursor", help="Also write a Cursor rule"),
+    copilot: bool = typer.Option(False, "--copilot", help="Also write Copilot instructions"),
+    all_editors: bool = typer.Option(False, "--all", help="Write every supported format"),
+) -> None:
+    """Make your editor's AI agent demagic-aware (writes AGENTS.md by default)."""
+    from demagic.agent_setup import init_project
+    targets = {"agents"}
+    if all_editors:
+        targets |= {"claude", "cursor", "copilot"}
+    if claude:
+        targets.add("claude")
+    if cursor:
+        targets.add("cursor")
+    if copilot:
+        targets.add("copilot")
+    for written in init_project(path, targets):
+        typer.echo(f"wrote {written}")
+    typer.echo('Done. Now tell your AI agent: "convert this Magic xpa app with demagic".')
+
+
 @app.command(name="run-all")
 def run_all(
     path: Path,

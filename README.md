@@ -92,6 +92,28 @@ demagic run-all ./MyMagicApp --out ./myapp-python --skip-translate
 
 ---
 
+## Use it with your AI coding agent (no API key) ⭐
+
+The easiest way — let the AI agent you **already** use (Claude Code, Cursor, Copilot, Aider, Codex, Cline, Zed…) be the translation engine, on its own model and tokens. No separate key, no extra bill.
+
+```bash
+uv tool install demagic        # or: pipx install demagic / pip install demagic
+cd my-magic-project
+demagic init                   # writes AGENTS.md so your agent knows the workflow
+```
+
+Then just tell your agent:
+
+> **"Convert this Magic xpa app to Python with demagic."**
+
+It runs the deterministic stages (free), reads the per-program context with `demagic pack`, writes the `run()` bodies into the generated stubs using the tuned rules, and `demagic verify` reconciles its edits back into the Coverage Ledger — flipping each program to **converted** (or **flagged** if it left a `# DEMAGIC-FLAG:` note). The ledger guarantees your agent can't quietly skip anything.
+
+`demagic init` writes `AGENTS.md` by default (read by most agents); add `--cursor`, `--claude`, `--copilot`, or `--all` for editor-specific files.
+
+> Prefer a hands-off batch run or CI? The `--model` API mode above does the same translation without an agent in the loop.
+
+---
+
 ## What actually gets converted
 
 | Magic concept | Becomes | How |

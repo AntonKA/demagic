@@ -59,6 +59,10 @@ def run_ty(target: Path) -> int | None:
 
 
 def run_verification(workdir: Path, out_dir: Path) -> VerificationResult:
+    # Pull in any translations an AI agent wrote directly into the service
+    # files (agent-driven, no-API-key flow) before tallying the ledger.
+    from demagic.verify.reconcile import reconcile_from_disk
+    reconcile_from_disk(workdir, out_dir)
     ledger = Ledger.load(workdir)
     result = VerificationResult(pending=ledger.reconcile())
     for entry in ledger.all_entries():

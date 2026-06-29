@@ -88,6 +88,15 @@ for an offline run. Exit code 2 means no model was configured for translate.
 | `demagic verify <out> --workdir W` | Reconcile ledger + ruff/ty + report | After any stage, to see where things stand |
 | `demagic report --workdir W` | Print `coverage-report.md` | Quick status |
 | `demagic run-all <dir> --out O --workdir W --skip-translate` | Full offline pipeline | Feasibility check, no API key |
+| `demagic pack [id] --workdir W` | Print rules + context pack(s) | Agent-driven translation (no API key) |
+| `demagic init [--all]` | Write AGENTS.md / editor agent files | Make a project's agent demagic-aware |
+
+**Agent-driven mode (no API key):** instead of `--model`, you can translate
+with your own model. `demagic init` drops the workflow into AGENTS.md; then run
+`run-all ... --skip-translate`, `demagic pack` to get each program's context,
+write the `run()` bodies into the `app/services/prg_<id>.py` stubs (remove the
+`DEMAGIC-PENDING` marker; leave `# DEMAGIC-FLAG: <reason>` for anything
+untranslatable), and `demagic verify` reconciles your edits into the ledger.
 
 For "what's inside this app?" questions, read `W/ir.json` directly — it is a
 `ProjectIR` with `data_objects` (tables/views/SPs with columns and the
