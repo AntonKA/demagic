@@ -13,11 +13,14 @@ description: >-
 # demagic — Magic xpa → Python conversion
 
 demagic converts Magic xpa applications (their XML Source export) into a
-FastAPI + SQLModel Python project. It is a 5-stage pipeline with one core
-guarantee: a **Coverage Ledger** tracks every artifact (program, logic unit,
-expression, form, menu, table), and each one must end the run as `converted`,
-`flagged` (with a reason), or `unparsed` (surfaced loudly). Nothing is ever
-silently dropped — the verify stage exits non-zero if anything is unaccounted.
+FastAPI + SQLModel Python project. It is **domain-agnostic** — it works from the
+Source XML structure, not any schema or industry, so it handles a Magic app from
+any field (finance, insurance, healthcare, manufacturing, retail, government,
+logistics) identically. It is a 5-stage pipeline with one core guarantee: a
+**Coverage Ledger** tracks every artifact (program, logic unit, expression,
+form, menu, table), and each one must end the run as `converted`, `flagged`
+(with a reason), or `unparsed` (surfaced loudly). Nothing is ever silently
+dropped — the verify stage exits non-zero if anything is unaccounted.
 
 Stages: `scan` (XML → typed IR + ledger) → `analyze` (call graph,
 dependency-first order, dead code) → `scaffold` (SQLModel models, FastAPI

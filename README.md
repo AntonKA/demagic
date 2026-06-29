@@ -13,6 +13,8 @@ Magic xpa is a proprietary metadata 4GL (fourth-generation language). Applicatio
 
 `demagic` is the open-source answer. It parses the Magic xpa Source XML format, builds a typed Intermediate Representation of your application, deterministically generates a FastAPI + SQLModel target project, and uses an LLM only where semantics genuinely require judgment - translating business logic in program task bodies. Everything that touches your codebase is auditable, reproducible, and covered.
 
+**Domain-agnostic by design.** Magic xpa (and its ancestors uniPaaS and eDeveloper) powers line-of-business systems across finance, insurance, healthcare, manufacturing, retail, government, utilities, and logistics. `demagic` works from the Source XML *structure* - tables, programs, logic units, expressions - not from any particular schema or industry, so it converts an insurance policy engine the same way it converts a shop-floor scheduler or an order desk. The bundled example app (a simple customers-and-orders schema) is just a neutral illustration; your domain tables flow through the exact same pipeline.
+
 ---
 
 ## The Coverage Ledger guarantee
