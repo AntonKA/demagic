@@ -166,7 +166,7 @@ demagic **does not include, embed, modify, decompile, or redistribute any Magic 
 
 ---
 
-Built by **[Anton](https://github.com/AntonKA)**
+Built by **Anton** · [GitHub](https://github.com/AntonKA) · [X / Twitter](https://x.com/antonamosh) · [LinkedIn](https://www.linkedin.com/in/antonalemoush/)
 
 If demagic saves you from a hand-rewrite, a ⭐ helps others find it.
 
