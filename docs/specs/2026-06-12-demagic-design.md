@@ -2,7 +2,9 @@
 
 **Date:** 2026-06-12
 **Status:** Approved (pending implementation plan)
-**License:** MIT
+**License:** Apache-2.0 (originally drafted as MIT; switched to Apache-2.0 at
+publish for its explicit patent + trademark clauses, given the project sits
+adjacent to a commercial vendor's ecosystem)
 **Repo:** standalone public repo `demagic` (this directory)
 
 ## One-liner
@@ -165,7 +167,7 @@ examples/      # synthetic sample app + its converted output
 - **Clean-room:** zero proprietary XML, names, or data in the public repo. Test fixtures
   are synthetic.
 - Credentials via env vars only.
-- MIT license. GitHub topics: `magic-xpa`, `legacy-migration`, `transpiler`, `llm`,
+- Apache-2.0 license. GitHub topics: `magic-xpa`, `legacy-migration`, `transpiler`, `llm`,
   `modernization`, `fastapi`.
 
 ## Success criteria (v1)

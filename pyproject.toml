@@ -4,17 +4,17 @@ version = "0.1.0"
 description = "Break the Magic spell - LLM-powered Magic xpa to Python migration with a 100% coverage ledger"
 readme = "README.md"
 requires-python = ">=3.12"
-license = { text = "MIT" }
-authors = [{ name = "demagic contributors" }]
+license = { text = "Apache-2.0" }
+authors = [{ name = "Anton (AntonKA) and demagic contributors" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
     "Topic :: Software Development :: Code Generators",
 ]
-keywords = ["magic-xpa", "legacy-migration", "transpiler", "llm", "modernization"]
+keywords = ["magic-xpa", "unipaas", "edeveloper", "4gl", "legacy-migration", "modernization", "transpiler", "llm"]
 dependencies = [
     "pydantic>=2.7",
     "typer>=0.12",
@@ -29,8 +29,9 @@ anthropic = ["pydantic-ai-slim[anthropic]"]
 openai = ["pydantic-ai-slim[openai]"]
 
 [project.urls]
-Homepage = "https://github.com/REPLACE-ME/demagic"
-Issues = "https://github.com/REPLACE-ME/demagic/issues"
+Homepage = "https://github.com/AntonKA/demagic"
+Repository = "https://github.com/AntonKA/demagic"
+Issues = "https://github.com/AntonKA/demagic/issues"
 
 [project.scripts]
 demagic = "demagic.cli:app"

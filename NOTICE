@@ -1,0 +1,25 @@
+demagic
+Copyright 2026 demagic contributors
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+---
+
+Trademarks and independence
+============================
+
+demagic is an independent, community-built open-source project. It is NOT
+affiliated with, endorsed by, sponsored by, or connected to Magic Software
+Enterprises Ltd. or any of its subsidiaries.
+
+"Magic xpa", "uniPaaS", "eDeveloper", and related marks are trademarks of
+Magic Software Enterprises Ltd. "Python" is a trademark of the Python Software
+Foundation. All other product names, logos, and brands are the property of
+their respective owners. These names are used in this project solely for
+identification and descriptive purposes (nominative fair use) to explain what
+demagic does. Their use does not imply any affiliation or endorsement.
+
+demagic does not include, embed, modify, decompile, or redistribute any Magic
+Software product, runtime, binary, library, or source code. It operates only on
+the Source XML that a user exports from their own licensed Magic xpa
+application - that is, the user's own application metadata, which the user owns.
