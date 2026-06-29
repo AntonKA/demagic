@@ -12,12 +12,13 @@ from demagic.ir.models import ProjectIR
 from demagic.ledger.ledger import ArtifactStatus, Ledger
 from demagic.translate.agent import TranslationResult, build_agent, build_context_pack
 
+# Provenance goes in a COMMENT block, not a docstring: the translated code
+# usually starts with its own module docstring/imports, and a second docstring
+# would demote those imports below the top of the file (E402).
 _MODULE_TEMPLATE = '''\
-"""Service for Magic program #{prog_id} - translated by demagic.
-
-Assumptions:
+# Service for Magic program #{prog_id} - translated by demagic.
+# Assumptions:
 {assumptions}
-"""
 {code}
 '''
 
@@ -67,7 +68,7 @@ def translate_all(project: ProjectIR, workdir: Path, out_dir: Path,
             ledger.save()
             continue
 
-        assumptions = "\n".join(f"- {a}" for a in result.assumptions) or "- none stated"
+        assumptions = "\n".join(f"#   - {a}" for a in result.assumptions) or "#   - none stated"
         service_path.write_text(_MODULE_TEMPLATE.format(
             prog_id=prog_id, assumptions=assumptions, code=result.python_code),
             encoding="utf-8")
