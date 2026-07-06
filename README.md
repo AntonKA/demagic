@@ -36,12 +36,12 @@ When a shop finally decides to leave, they hit a wall: **rewrite everything by h
 
 Most "AI migration" tools convert what they understand and quietly skip the rest — so you ship a system that's secretly full of holes. demagic refuses to do that.
 
-Before it writes a single file, demagic registers **every artifact** it discovers — every data object, program, logic unit, expression, form, and menu entry — in a **Coverage Ledger**. The pipeline cannot exit successfully until each one is reconciled to exactly one of:
+Before it writes a single file, demagic registers **every artifact** it discovers — every data object, program, logic unit, expression, form, and menu entry in a **Coverage Ledger**. The pipeline cannot exit successfully until each one is reconciled to exactly one of:
 
 | Status | Meaning |
 | --- | --- |
 | ✅ **converted** | generated output exists and passed static checks (`ruff` + `ty`) |
-| ⚠️ **flagged** | converted with caveats — a specific, recorded reason a human must review |
+| ⚠️ **flagged** | converted with caveats a specific, recorded reason a human must review |
 | 🔍 **unparsed** | the parser hit XML it doesn't model yet — surfaced loudly, never hidden |
 
 If anything is left `pending`, **`verify` exits non-zero and names every gap.** You cannot accidentally ship an incomplete migration. The coverage report *is* the deliverable — it tells you precisely how much is done and exactly what's left, with a reason for every item.
@@ -73,7 +73,7 @@ Meanwhile a 70-logic-unit monster full of Win32 calls, raw SOAP, and embedded C#
 
 ---
 
-## Quickstart — let your AI agent do it ⭐
+## Quickstart: let your AI agent do it ⭐
 
 demagic is a **lightweight CLI your AI coding agent drives** (Claude Code, Cursor, Copilot, Aider, Codex, Cline, Zed…). The agent does the translation on **its own model and tokens** — no API key, no extra bill, no LLM SDK in the install.
 
