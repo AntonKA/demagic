@@ -1,0 +1,36 @@
+name: Coverage gap
+description: The coverage report shows an element as unparsed, or a Magic function has no mapping yet.
+labels: [coverage]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The Coverage Ledger is the contract: everything ends up `converted`, `flagged` or `unparsed`. This form is for the `unparsed` ones and for missing function mappings.
+        **Names only, please**: the tag or function name and how often it appears. No proprietary XML.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What is missing
+      options:
+        - An XML element the parser does not handle
+        - A Magic built-in function with no Python mapping
+        - Something else in the coverage report
+    validations:
+      required: true
+  - type: input
+    id: name
+    attributes:
+      label: Element or function name
+      placeholder: e.g. a tag name from the report, or a function such as DStr
+    validations:
+      required: true
+  - type: input
+    id: count
+    attributes:
+      label: How many times it appears in your app
+      description: From the coverage report.
+  - type: textarea
+    id: meaning
+    attributes:
+      label: What it does in Magic (if you know)
+      description: A sentence or the Magic help entry in your own words. A suggested Python equivalent is welcome.

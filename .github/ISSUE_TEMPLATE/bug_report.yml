@@ -1,0 +1,41 @@
+name: Bug report
+description: Something demagic did wrong, crashed on, or silently skipped.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. **Please don't paste proprietary Magic XML** or customer data here: element and tag names, error text and the coverage report numbers are all we need.
+  - type: input
+    id: version
+    attributes:
+      label: demagic version
+      description: The commit you are on (`git rev-parse --short HEAD`), or the package version from `uv pip show demagic`.
+    validations:
+      required: true
+  - type: input
+    id: magic
+    attributes:
+      label: Magic version
+      description: Magic xpa, uniPaaS or eDeveloper, with its version number.
+    validations:
+      required: true
+  - type: input
+    id: command
+    attributes:
+      label: Command you ran
+      placeholder: demagic scan ./MyApp
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened, and what you expected
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Error output or coverage report excerpt
+      description: Trim anything that names your company, tables or business rules.
+      render: text
