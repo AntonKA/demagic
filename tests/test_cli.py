@@ -1,3 +1,4 @@
+from importlib import metadata
 from pathlib import Path
 
 from typer.testing import CliRunner
@@ -5,6 +6,12 @@ from typer.testing import CliRunner
 from demagic.cli import app
 
 runner = CliRunner()
+
+
+def test_version_option():
+    result = runner.invoke(app, ["--version"])
+    assert result.exit_code == 0
+    assert result.output.strip() == f"demagic {metadata.version('demagic')}"
 
 
 def test_scan_command(sample_repo: Path, tmp_path: Path):

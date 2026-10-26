@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+from importlib import metadata
 from pathlib import Path
 
 import typer
@@ -15,6 +16,21 @@ from demagic.verify.report import write_report
 app = typer.Typer(help="Break the Magic spell - Magic xpa to Python converter.")
 
 WorkdirOpt = typer.Option(Path(".demagic"), "--workdir", help="Pipeline state directory")
+
+
+def _version_callback(value: bool) -> None:
+    if value:
+        typer.echo(f"demagic {metadata.version('demagic')}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False, "--version", callback=_version_callback, is_eager=True,
+        help="Show the demagic version and exit"),
+) -> None:
+    """Break the Magic spell - Magic xpa to Python converter."""
 
 
 @app.command()
